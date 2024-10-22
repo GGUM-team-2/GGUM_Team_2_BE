@@ -1,4 +1,4 @@
-package com.example.ggum.service;
+package com.example.ggum.domain.user.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

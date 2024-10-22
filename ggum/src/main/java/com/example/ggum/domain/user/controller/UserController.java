@@ -1,11 +1,11 @@
-package com.example.ggum.controller;
+package com.example.ggum.domain.user.controller;
 
-import com.example.ggum.dto.ResponseDTO;
-import com.example.ggum.dto.UserDTO;
-import com.example.ggum.model.UserEntity;
+import com.example.ggum.domain.user.dto.ResponseDTO;
+import com.example.ggum.domain.user.dto.UserDTO;
+import com.example.ggum.domain.user.entity.User;
 import com.example.ggum.security.TokenProvider;
-import com.example.ggum.service.MailService;
-import com.example.ggum.service.UserService;
+import com.example.ggum.domain.user.service.MailService;
+import com.example.ggum.domain.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class UserController {
 
     private ResponseEntity<?> registerUser(UserDTO userDTO, String role) {
         try {
-            UserEntity user = UserEntity.builder()
+            User user = com.example.ggum.domain.user.entity.User.builder()
                     .email(userDTO.getEmail())
                     .username(userDTO.getUsername())
                     .password(passwordEncoder.encode(userDTO.getPassword()))
@@ -41,7 +41,7 @@ public class UserController {
                     .likeCount(0)
                     .dislikeCount(0)
                     .build();
-            UserEntity registeredUser = userService.create(user);
+            com.example.ggum.domain.user.entity.User registeredUser = userService.create(user);
             UserDTO responseUserDTO = UserDTO.builder()
                     .email(registeredUser.getEmail())
                     .id(registeredUser.getId())
@@ -67,7 +67,7 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
-        UserEntity user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPassword(), passwordEncoder);
+        User user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPassword(), passwordEncoder);
 
         if (user != null) {
             final String token = tokenProvider.create(user);

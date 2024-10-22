@@ -1,4 +1,4 @@
-package com.example.ggum.dto;
+package com.example.ggum.domain.user.dto;
 
 import java.util.List;
 
