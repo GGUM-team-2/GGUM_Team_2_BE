@@ -1,4 +1,4 @@
-package com.example.ggum.config;
+package com.example.ggum.global.config;
 
 import com.example.ggum.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;

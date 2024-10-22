@@ -1,4 +1,4 @@
-package com.example.ggum.model;
+package com.example.ggum.domain.user.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(uniqueConstraints={@UniqueConstraint(columnNames="id")})
 
-public class UserEntity {
+public class User {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid",strategy="uuid")
