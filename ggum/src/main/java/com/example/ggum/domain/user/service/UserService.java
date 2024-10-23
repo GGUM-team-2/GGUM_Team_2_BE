@@ -27,6 +27,22 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public void withdraw(final Long userId) {
+        if (userId == null) {
+            throw new RuntimeException("Invalid user ID");
+        }
+
+        // 사용자 찾기
+        final User user = userRepository.findById(String.valueOf(userId))
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        log.info("Deleting user with ID: {}", userId);
+
+        // 사용자 삭제
+        userRepository.delete(user);
+    }
+
+
     public User getByCredentials(final String email, final String password, final PasswordEncoder encoder) {
         final User originalUser=userRepository.findByEmail(email);
         if(originalUser != null && encoder.matches(password, originalUser.getPassword())) {
