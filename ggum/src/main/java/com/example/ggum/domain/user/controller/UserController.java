@@ -18,7 +18,7 @@ import java.util.HashMap;
 @CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -55,16 +55,19 @@ public class UserController {
         }
     }
 
+    //관리자 회원가입
     @PostMapping("/managerSignup")
     public ResponseEntity<?> registerManager(@RequestBody UserDTO userDTO) {
         return registerUser(userDTO, "MANAGER");
     }
 
+    //일반유저 회원가입
     @PostMapping("/userSignup")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         return registerUser(userDTO, "USER");
     }
 
+    //로그인
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
         User user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPassword(), passwordEncoder);
@@ -85,21 +88,60 @@ public class UserController {
         }
     }
 
+    //회원탈퇴
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<?> withdrawUser(@RequestParam Long userId) {
+        try {
+            userService.withdraw(userId);
+            return ResponseEntity.ok().body("Accept withdraw");
+        } catch (Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
     // 인증 이메일 전송
     @PostMapping("/mailSend")
     public ResponseEntity<?> mailSend(@RequestParam String mail) {
         HashMap<String, Object> response = new HashMap<>();
+
         try {
-            mailService.sendMail(mail); // 비동기로 메일 전송
+            // 이메일 도메인 검증
+            if (!isSchoolEmail(mail)) {
+                throw new RuntimeException("학교 웹메일이 아닙니다.");
+            }
+
+            // 학교 웹메일일 경우 인증 메일 전송
+            mailService.sendMail(mail);
             response.put("success", true);
             response.put("message", "인증 메일이 전송되었습니다.");
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             response.put("success", false);
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    // 학교 웹메일인지 확인하는 파싱 알고리즘
+    private boolean isSchoolEmail(String email) {
+        boolean result = false;
+        String[] parts = email.split("@");
+        if (parts.length != 2) {// 이메일 형식인지 확인
+            result = false;
+        }
+        else {//학교 웹 메일인지 확인
+            String domain = parts[1];
+            String[] domainParts = domain.split("\\.");
+            int length = domainParts.length;
+            if (length >= 3 && "ac".equals(domainParts[length - 2]) && "kr".equals(domainParts[length - 1])) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
 
     // 인증번호 일치 여부 확인
     @GetMapping("/mailCheck")
