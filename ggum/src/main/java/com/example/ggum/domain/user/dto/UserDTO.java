@@ -14,7 +14,7 @@ public class UserDTO {
     private String email;
     private String username;
     private String password;
-    private String id;
+    private Long id;
     private String role;
     private long likeCount;
     private long dislikeCount;
