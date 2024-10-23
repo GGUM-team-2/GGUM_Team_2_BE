@@ -51,7 +51,9 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher("/"),
                                 new AntPathRequestMatcher("/api/v1/auth/**"),
-                                new AntPathRequestMatcher("/h2-console/**"))
+                                new AntPathRequestMatcher("/h2-console/**"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),   // Swagger UI 경로
+                                new AntPathRequestMatcher("/v3/api-docs/**"))  // OpenAPI 경로
                         .permitAll();
             } catch (Exception e) {
                 e.printStackTrace();
