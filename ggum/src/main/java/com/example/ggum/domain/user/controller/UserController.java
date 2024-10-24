@@ -142,6 +142,22 @@ public class UserController {
         return result;
     }
 
+    @GetMapping("/validateToken")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            String userId = tokenProvider.validateAndGetUserId(token);
+
+            return ResponseEntity.ok().body("사용자 ID: " + userId);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
+        }
+    }
+
 
     // 인증번호 일치 여부 확인
     @GetMapping("/mailCheck")

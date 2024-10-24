@@ -15,6 +15,7 @@ public class PostConverter {
     
     
     public static PostResponseDTO.PostResultDTO toJoinResultDTO(Post Post){
+
         return PostResponseDTO.PostResultDTO.builder()
                 .postId(Post.getId())
                 .createdAt(LocalDateTime.now())
