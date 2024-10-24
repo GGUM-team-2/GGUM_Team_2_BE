@@ -3,9 +3,12 @@ package com.example.ggum.domain.user.controller;
 import com.example.ggum.domain.user.dto.ResponseDTO;
 import com.example.ggum.domain.user.dto.UserDTO;
 import com.example.ggum.domain.user.entity.User;
+import com.example.ggum.domain.user.repository.UserRepository;
 import com.example.ggum.security.TokenProvider;
 import com.example.ggum.domain.user.service.MailService;
 import com.example.ggum.domain.user.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,8 @@ public class UserController {
     private MailService mailService; // MailService 주입
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private UserRepository userRepository;
 
     private ResponseEntity<?> registerUser(UserDTO userDTO, String role) {
         try {
@@ -106,12 +111,10 @@ public class UserController {
         HashMap<String, Object> response = new HashMap<>();
 
         try {
-            // 이메일 도메인 검증
-            if (!isSchoolEmail(mail)) {
+            if (!userService.isSchoolEmail(mail)) {
                 throw new RuntimeException("학교 웹메일이 아닙니다.");
             }
 
-            // 학교 웹메일일 경우 인증 메일 전송
             mailService.sendMail(mail);
             response.put("success", true);
             response.put("message", "인증 메일이 전송되었습니다.");
@@ -124,24 +127,135 @@ public class UserController {
         }
     }
 
-    // 학교 웹메일인지 확인하는 파싱 알고리즘
-    private boolean isSchoolEmail(String email) {
-        boolean result = false;
-        String[] parts = email.split("@");
-        if (parts.length != 2) {// 이메일 형식인지 확인
-            result = false;
-        }
-        else {//학교 웹 메일인지 확인
-            String domain = parts[1];
-            String[] domainParts = domain.split("\\.");
-            int length = domainParts.length;
-            if (length >= 3 && "ac".equals(domainParts[length - 2]) && "kr".equals(domainParts[length - 1])) {
-                result = true;
+    //회원가입을 위한 메일 전송
+    @PostMapping("/mailSendForSignup")
+    public ResponseEntity<?> mailSendForSignup(@RequestParam String mail) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        try {
+            if (userService.existsByEmail(mail)) {
+                throw new RuntimeException("이미 등록된 이메일입니다.");
             }
+
+            if (!userService.isSchoolEmail(mail)) {
+                throw new RuntimeException("학교 웹메일이 아닙니다.");
+            }
+
+            mailService.sendMail(mail);
+            response.put("success", true);
+            response.put("message", "인증 메일이 전송되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
-        return result;
     }
 
+    //비밀번호 재설정을 위한 메일 전송
+    @PostMapping("/mailSendForCheckEmail")
+    public ResponseEntity<?> mailSendForCheckEmail(@RequestParam String email) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        try {
+            if (!userService.existsByEmail(email)) {
+                throw new RuntimeException("해당 이메일을 가진 사용자가 존재하지 않습니다.");
+            }
+
+            mailService.sendMail(email);
+            response.put("success", true);
+            response.put("message", "비밀번호 찾기 인증 메일이 전송되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    //토큰 재발행
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String token) {
+        try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            Claims claims;
+            try {
+                claims = tokenProvider.validateAndGetClaims(token);
+            } catch (ExpiredJwtException e) {
+                claims = e.getClaims();
+            }
+
+            if (claims != null) {
+                User user = userRepository.findById(Long.parseLong(claims.getSubject()));
+                if (user != null) {
+                    String newToken = tokenProvider.create(user);
+                    return ResponseEntity.ok().body("새로운 토큰: " + newToken);
+                }
+            }
+
+            return ResponseEntity.badRequest().body("유효하지 않은 사용자 정보입니다.");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
+        }
+    }
+
+    //닉네임 변경
+    @PostMapping("/changeUsername")
+    public ResponseEntity<?> changeUsername(@RequestParam Long userId, @RequestParam String newUsername) {
+        try {
+            if (userService.existsByUsername(newUsername)) {
+                throw new RuntimeException("이미 존재하는 닉네임입니다.");
+            }
+
+            User user = userRepository.findById(userId);
+            if (user == null) {
+                throw new RuntimeException("해당 사용자를 찾을 수 없습니다.");
+            }
+
+            user.setUsername(newUsername);
+            userRepository.save(user);
+
+
+            UserDTO responseDTO = UserDTO.builder()
+                    .email(user.getEmail())
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .role(user.getRole())
+                    .build();
+
+            return ResponseEntity.ok().body(responseDTO);
+
+        } catch (Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    //닉네임 중복 확인
+    @GetMapping("/checkSamename")
+    public ResponseEntity<?> checkSamename(@RequestParam String username) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        if (userService.existsByUsername(username)) {
+            response.put("success", false);
+            response.put("message", "이미 존재하는 닉네임입니다.");
+            return ResponseEntity.badRequest().body(response);
+        } else {
+            response.put("success", true);
+            response.put("message", "사용가능한 닉네임입니다!");
+            return ResponseEntity.ok().body(response);
+        }
+    }
+
+    //토큰 검증용 API
     @GetMapping("/validateToken")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
@@ -157,7 +271,6 @@ public class UserController {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
         }
     }
-
 
     // 인증번호 일치 여부 확인
     @GetMapping("/mailCheck")

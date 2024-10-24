@@ -50,4 +50,32 @@ public class UserService {
         }
         return null;
     }
+
+    // 학교 웹메일인지 확인하는 파싱 알고리즘
+    public boolean isSchoolEmail(String email) {
+        boolean result = false;
+        String[] parts = email.split("@");
+        if (parts.length != 2) {// 이메일 형식인지 확인
+            result = false;
+        }
+        else {//학교 웹 메일인지 확인
+            String domain = parts[1];
+            String[] domainParts = domain.split("\\.");
+            int length = domainParts.length;
+            if (length >= 3 && "ac".equals(domainParts[length - 2]) && "kr".equals(domainParts[length - 1])) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    // 이메일 중복 확인 메서드
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    // 닉네임 중복 확인 메서드
+    public boolean existsByUsername(String Username) {
+        return userRepository.existsByUsername(Username);
+    }
 }
