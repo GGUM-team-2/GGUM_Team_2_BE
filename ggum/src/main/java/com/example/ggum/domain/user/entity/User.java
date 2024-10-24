@@ -1,8 +1,13 @@
 package com.example.ggum.domain.user.entity;
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +22,8 @@ import lombok.NoArgsConstructor;
 
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid",strategy="uuid")
     private Long id;
 
     @Column(nullable=false)
