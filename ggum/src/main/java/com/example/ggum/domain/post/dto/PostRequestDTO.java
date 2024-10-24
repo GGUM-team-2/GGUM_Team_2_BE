@@ -23,4 +23,17 @@ public class PostRequestDTO {
     public static class PostDeleteDto{
         Long postId;
     }
+
+    @Getter
+    public static class PostUpdateDto{
+        Long postId;
+        String title;
+        String content;
+        Long price;
+        String category;
+        String postType;
+        Long participant_limit;
+    }
+
+
 }

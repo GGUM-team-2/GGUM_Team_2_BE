@@ -33,6 +33,7 @@ public class PostConverter {
                 .participantLimit(request.getParticipant_limit())
                 .postType(PostMapper.toPostType(request.getPostType()))
                 .user(user)
+                .createdAt(LocalDateTime.now())
                 .build();
 
     }
