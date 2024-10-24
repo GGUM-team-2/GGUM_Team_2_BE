@@ -4,7 +4,7 @@ import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
 import com.example.ggum.domain.post.entity.Post;
 import com.example.ggum.domain.post.repository.PostLikeRepository;
-import com.example.ggum.domain.post.repository.PostRepostiroy;
+import com.example.ggum.domain.post.repository.PostRepository;
 import com.example.ggum.domain.user.entity.User;
 import com.example.ggum.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PostServiceImpl implements PostService {
 
-    private final PostRepostiroy postRepostiroy;
+    private final PostRepository postRepository;
 
     private final PostLikeRepository postLikeRepository;
 
@@ -30,6 +30,21 @@ public class PostServiceImpl implements PostService {
         // 사용자 정보를 가져오기 위한 리포지토리 호출
         User user = userRepository.findById(userId);
         Post post = PostConverter.toPost(request,user);
-        return postRepostiroy.save(post);
+        return postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(Long boardId, Long userId){
+
+        Post post = postRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
+
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new SecurityException("게시물 소유자가 아닙니다."); // 소유자가 아닐 경우 예외 처리
+        }
+
+        postRepository.delete(post);
     }
 }
