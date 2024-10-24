@@ -17,7 +17,7 @@ import com.example.ggum.security.TokenProvider;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/board")
+@RequestMapping("/api/v1/post")
 public class PostController {
 
     private final PostService postService;
@@ -34,25 +34,25 @@ public class PostController {
         return ApiResponse.onSuccess(PostConverter.toJoinResultDTO(post));
     }
 
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/{postId}")
     public ApiResponse<String> deletePost(
-            @PathVariable Long boardId,
+            @PathVariable Long postId,
             @RequestHeader("Authorization") String token) {
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
-        postService.deletePost(boardId, userId);
+        postService.deletePost(postId, userId);
 
         return ApiResponse.onSuccess("success");
     }
 
-    @PatchMapping("/{boardId}")
+    @PatchMapping("/{postId}")
     public ApiResponse<PostResponseDTO.PostResultDTO> updatePost(
-            @PathVariable Long boardId,
+            @PathVariable Long postId,
             @RequestHeader("Authorization") String token,
             @RequestBody @Valid PostRequestDTO.PostUpdateDto request) {
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token)); // 토큰에서 사용자 ID 추출
-        Post post = postService.postUpdate(boardId, request, userId); // 사용자 ID를 서비스에 전달
+        Post post = postService.postUpdate(postId, request, userId); // 사용자 ID를 서비스에 전달
 
         return ApiResponse.onSuccess(PostConverter.toJoinResultDTO(post));
     }

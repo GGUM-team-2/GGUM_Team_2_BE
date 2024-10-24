@@ -36,9 +36,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePost(Long boardId, Long userId){
+    public void deletePost(Long postId, Long userId){
 
-        Post post = postRepository.findById(boardId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
 
 
@@ -51,8 +51,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post postUpdate(Long boardId, PostRequestDTO.PostUpdateDto request, Long userId) {
-        Post post = postRepository.findById(boardId)
+    public Post postUpdate(Long postId, PostRequestDTO.PostUpdateDto request, Long userId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
 
         if (!post.getUser().getId().equals(userId)) {
