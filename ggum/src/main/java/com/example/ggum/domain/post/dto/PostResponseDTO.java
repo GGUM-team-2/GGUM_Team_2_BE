@@ -16,8 +16,15 @@ public class PostResponseDTO {
     public static class PostResultDTO{
         Long postId;
         LocalDateTime createdAt;
-    }
 
+        @Override
+        public String toString() {
+            return "PostResultDTO{" +
+                    "postId=" + postId +
+                    ", createdAt=" + createdAt +
+                    '}';
+        }
+    }
 
 
 }

@@ -8,6 +8,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ggum.domain.post.dto.PostResponseDTO;
@@ -25,10 +26,12 @@ public class PostController {
 
     @PostMapping("/")
     public ApiResponse<PostResponseDTO.PostResultDTO> makePost(
-            @RequestHeader("Authorization") String token, // Authorization 헤더에서 토큰을 받아옴
+            @RequestHeader("Authorization") String token,
             @RequestBody @Valid PostRequestDTO.PostCreateDto request) {
-
-        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token)); // 토큰에서 사용자 ID 추출
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
         Post post = postService.postCreate(request, userId); // 사용자 ID를 서비스에 전달
 
         return ApiResponse.onSuccess(PostConverter.toJoinResultDTO(post));
@@ -36,8 +39,12 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public ApiResponse<String> deletePost(
-            @PathVariable Long postId,
+            @PathVariable() Long postId,
             @RequestHeader("Authorization") String token) {
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
         postService.deletePost(postId, userId);
@@ -50,6 +57,10 @@ public class PostController {
             @PathVariable Long postId,
             @RequestHeader("Authorization") String token,
             @RequestBody @Valid PostRequestDTO.PostUpdateDto request) {
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token)); // 토큰에서 사용자 ID 추출
         Post post = postService.postUpdate(postId, request, userId); // 사용자 ID를 서비스에 전달
