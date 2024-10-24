@@ -1,15 +1,26 @@
 package com.example.ggum.domain.post.entity;
 
+import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.example.ggum.domain.user.entity.User;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Builder
+@DynamicUpdate
+@DynamicInsert
+@AllArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +38,9 @@ public class Post {
     private String content;
 
     @Column(nullable = false)
-    private String postCategory;
+    private PostCategory postCategory;
 
-    @Column(nullable = false)
+    @Column()
     private Long price;
 
     @Column(name="participant_limit", nullable = false)
@@ -44,10 +55,14 @@ public class Post {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name="end_date", nullable = false)
-    private LocalDateTime endDate;
+    //@Column(name="end_date", nullable = false)
+    //private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus poststatus;
+    private PostStatus postStatus;
+
+    @Column(name="post_type", nullable = false)
+    private PostType postType;
+
 }
