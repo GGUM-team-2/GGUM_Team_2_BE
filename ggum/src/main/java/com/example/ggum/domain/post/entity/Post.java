@@ -4,10 +4,7 @@ import com.example.ggum.domain.post.entity.status.PostCategory;
 import com.example.ggum.domain.post.entity.status.PostStatus;
 import com.example.ggum.domain.post.entity.status.PostType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.ggum.domain.user.entity.User;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Builder
 @DynamicUpdate
 @DynamicInsert

@@ -36,7 +36,7 @@ public class PostController {
 
     @DeleteMapping("/{boardId}")
     public ApiResponse<String> deletePost(
-            @PathVariable Long boardId, // URL 경로에서 boardId를 가져옴
+            @PathVariable Long boardId,
             @RequestHeader("Authorization") String token) {
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
@@ -45,7 +45,17 @@ public class PostController {
         return ApiResponse.onSuccess("success");
     }
 
+    @PatchMapping("/{boardId}")
+    public ApiResponse<PostResponseDTO.PostResultDTO> updatePost(
+            @PathVariable Long boardId,
+            @RequestHeader("Authorization") String token,
+            @RequestBody @Valid PostRequestDTO.PostUpdateDto request) {
 
+        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token)); // 토큰에서 사용자 ID 추출
+        Post post = postService.postUpdate(boardId, request, userId); // 사용자 ID를 서비스에 전달
+
+        return ApiResponse.onSuccess(PostConverter.toJoinResultDTO(post));
+    }
 
 
 }
