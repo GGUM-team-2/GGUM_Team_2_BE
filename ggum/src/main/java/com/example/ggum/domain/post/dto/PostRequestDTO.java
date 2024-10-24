@@ -35,5 +35,10 @@ public class PostRequestDTO {
         Long participant_limit;
     }
 
+    @Getter
+    public static class PostOneReadDto{
+        Long postId;
+    }
+
 
 }

@@ -68,4 +68,16 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post); // 업데이트된 게시물 반환
     }
 
+    @Override
+    public Post readOnePost(Long postId, Long userId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw new SecurityException("게시물 소유자가 아닙니다."); // 소유자가 아닐 경우 예외 처리
+        }
+
+        return post;
+    }
+
 }

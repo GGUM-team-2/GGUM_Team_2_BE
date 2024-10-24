@@ -38,4 +38,17 @@ public class PostConverter {
                 .build();
 
     }
+
+    public static PostResponseDTO.ReadPostDTO toReadPostDTO(Post post) {
+        return PostResponseDTO.ReadPostDTO.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .category(post.getPostCategory().name()) // Enum 값을 String으로 변환
+                .price(post.getPrice())
+                .createdAt(post.getCreatedAt())
+                .participantCount(post.getParticipantCount())
+                .participantLimit(post.getParticipantLimit())
+                .build();
+    }
 }
