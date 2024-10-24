@@ -4,11 +4,8 @@ import com.example.ggum.domain.post.ApiResponse;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.entity.Post;
 import com.example.ggum.domain.post.service.PostService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ggum.domain.post.dto.PostResponseDTO;
@@ -67,6 +64,22 @@ public class PostController {
 
         return ApiResponse.onSuccess(PostConverter.toJoinResultDTO(post));
     }
+
+    @GetMapping("/{postId}")
+    public ApiResponse<PostResponseDTO.ReadPostDTO> readOnePost(
+            @PathVariable() Long postId,
+            @RequestHeader("Authorization") String token) {
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
+        Post post = postService.readOnePost(postId, userId);
+
+        return ApiResponse.onSuccess(PostConverter.toReadPostDTO(post));
+    }
+
 
 
 }

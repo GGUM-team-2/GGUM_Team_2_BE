@@ -10,7 +10,7 @@ public class ApiResponse<T> {
     private int statusCode; // statusCode 추가
 
     public static <T> ApiResponse<T> onSuccess(T data) {
-        System.out.println(data);
+        //System.out.println(data);
         return new ApiResponse<>(true, data, "SUCCESS", 200); // statusCode 200 추가
     }
 
