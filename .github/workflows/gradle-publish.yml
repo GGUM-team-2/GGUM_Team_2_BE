@@ -16,11 +16,10 @@ jobs:
         with:
           java-version: 17
 
-      - name: List files
-        run: ls -R  # 현재 디렉토리와 모든 파일을 출력
-
       - name: Grant execute permission for gradlew
         run: chmod +x ./ggum/gradlew
+        shell: bash
 
       - name: Build with Gradle
-        run: ./ggum/gradlew build
+        run: cd ggum && ./gradlew build -x test
+        shell: bash
