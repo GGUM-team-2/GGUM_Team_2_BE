@@ -45,6 +45,7 @@ public class Post {
     @Column(name="participant_limit", nullable = false)
     private Long participantLimit;
 
+    @Builder.Default
     @Column(name="participant_count", nullable = false)
     private Long participantCount=1L;
 
@@ -54,6 +55,7 @@ public class Post {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Column(name="chatroom_count")
     private Long chatRoomCount=0L;
 
@@ -62,6 +64,7 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private PostStatus postStatus=PostStatus.OPEN;
 
     @Enumerated(EnumType.STRING)

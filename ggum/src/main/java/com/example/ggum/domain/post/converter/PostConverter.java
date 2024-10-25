@@ -28,11 +28,8 @@ public class PostConverter {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .postCategory(PostMapper.toPostCategory(request.getCategory()))  // 카테고리 변환
-                .postStatus(PostStatus.OPEN)
                 .price(request.getPrice())
-                .participantCount(1L)
                 .participantLimit(request.getParticipant_limit())
-                .chatRoomCount(0L)
                 .postType(PostMapper.toPostType(request.getPostType()))
                 .user(user)
                 .createdAt(LocalDateTime.now())
