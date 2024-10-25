@@ -53,8 +53,13 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher("/auth/**"),
                                 new AntPathRequestMatcher("/api/v1/**"),
                                 new AntPathRequestMatcher("/ws-stomp/**"),
-                                new AntPathRequestMatcher("/h2-console/**"))
-
+                                new AntPathRequestMatcher("/h2-console/**"),
+                                new AntPathRequestMatcher("/ws-stomp/**"),
+                                new AntPathRequestMatcher("/**/*.html"),
+                                new AntPathRequestMatcher("/**/*.css"),
+                                new AntPathRequestMatcher("/**/*.js"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),   // Swagger UI 경로
+                                new AntPathRequestMatcher("/v3/api-docs/**"))  // OpenAPI 경로
                         .permitAll();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,7 +97,7 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         // "*" 대신에 실제 허용할 도메인을 명시적으로 지정합니다.
-        config.addAllowedOrigin("*");
+        //config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
@@ -100,6 +105,8 @@ public class WebSecurityConfig {
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("OPTIONS");
         config.setMaxAge(MAX_AGE_SECS);
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("ws://localhost:8080");
         source.registerCorsConfiguration("/**", config);
         return source;
     }
