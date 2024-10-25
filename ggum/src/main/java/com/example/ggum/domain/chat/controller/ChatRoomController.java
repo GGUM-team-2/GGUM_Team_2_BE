@@ -26,8 +26,8 @@ public class ChatRoomController {
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoomRequest chatRoomRequest) {
         ChatRoom chatRoom = chatRoomService.createChatRoom(
                 chatRoomRequest.getRoomName(),
-                chatRoomRequest.getCreatorId(),
                 chatRoomRequest.getPostId(),
+                chatRoomRequest.getCreatorId(),
                 chatRoomRequest.getUserIds()
         );
         return ResponseEntity.ok(chatRoom);
