@@ -15,4 +15,6 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Optional<Message> findFirstByChatRoomOrderByCreatedAtDesc(ChatRoom chatRoom);
     List<Message> findByChatRoomIdOrderByCreatedAtAsc(Long chatRoomId);
+    void deleteByUserIdAndChatRoomId(Long userId, Long chatRoomId);
+    void deleteByChatRoomId(Long chatRoomId);
 }
