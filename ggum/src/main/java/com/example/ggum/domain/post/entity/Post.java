@@ -54,6 +54,9 @@ public class Post {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name="chatroom_count")
+    private Long chatRoomCount;
+
     //@Column(name="end_date", nullable = false)
     //private LocalDateTime endDate;
 
