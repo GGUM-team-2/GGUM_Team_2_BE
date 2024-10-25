@@ -1,6 +1,7 @@
 package com.example.ggum.domain.post.entity;
 
 import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostLikeStatus;
 import com.example.ggum.domain.post.entity.status.PostStatus;
 import com.example.ggum.domain.post.entity.status.PostType;
 import jakarta.persistence.*;
@@ -71,6 +72,11 @@ public class Post {
     @Column(name="post_type", nullable = false)
     private PostType postType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="post_like", nullable = false)
+    @Builder.Default
+    private PostLikeStatus postLikeStatus=PostLikeStatus.DISLIKE;
+
     @Override
     public String toString() {
         return "Post{" +
@@ -87,6 +93,7 @@ public class Post {
                 ", chatRoomCount=" + chatRoomCount +
                 ", postStatus=" + postStatus +
                 ", postType=" + postType +
+                ", postLikeStatus=" + postLikeStatus +
                 '}';
     }
 }

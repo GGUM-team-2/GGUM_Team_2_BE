@@ -5,7 +5,6 @@ import com.example.ggum.domain.chat.repository.ChatRoomRepository;
 import com.example.ggum.domain.chat.repository.JoinChatRepository;
 import com.example.ggum.domain.chat.repository.MessageRepository;
 import com.example.ggum.domain.post.converter.PostConverter;
-import com.example.ggum.domain.post.converter.PostMapper;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
 import com.example.ggum.domain.post.dto.PostResponseDTO;
 import com.example.ggum.domain.post.entity.Post;
@@ -16,7 +15,6 @@ import com.example.ggum.domain.post.repository.PostRepository;
 import com.example.ggum.domain.user.entity.User;
 import com.example.ggum.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -93,8 +91,8 @@ public class PostServiceImpl implements PostService {
         post.setContent(request.getContent());
         post.setPrice(request.getPrice());
         post.setParticipantLimit(request.getParticipant_limit());
-        post.setPostCategory(PostMapper.toPostCategory(request.getCategory()));
-        post.setPostType(PostMapper.toPostType(request.getPostType()));
+        post.setPostCategory(request.getCategory());
+        post.setPostType(request.getPostType());
         post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post); // 업데이트된 게시물 반환

@@ -2,6 +2,7 @@ package com.example.ggum.domain.post.service;
 
 import com.example.ggum.domain.post.entity.Post;
 import com.example.ggum.domain.post.entity.PostLike;
+import com.example.ggum.domain.post.entity.status.PostLikeStatus;
 import com.example.ggum.domain.post.repository.PostLikeRepository;
 import com.example.ggum.domain.post.repository.PostRepository;
 import com.example.ggum.domain.user.entity.User;
@@ -56,10 +57,13 @@ public class PostLikeService {
         Optional<PostLike> postLike = postLikeRepository.findByUserAndPost(user,post);
 
         if (postLike.isPresent()) {
+            post.setPostLikeStatus(PostLikeStatus.DISLIKE);
             deletePostLike(post, user);
         } else {
+            post.setPostLikeStatus(PostLikeStatus.LIKE);
             createPostLike(post, user);
         }
+        postRepository.save(post);
         return Map.of();
     }
 
