@@ -46,7 +46,7 @@ public class Post {
     private Long participantLimit;
 
     @Column(name="participant_count", nullable = false)
-    private Long participantCount;
+    private Long participantCount=1L;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
@@ -55,14 +55,14 @@ public class Post {
     private LocalDateTime updatedAt;
 
     @Column(name="chatroom_count")
-    private Long chatRoomCount;
+    private Long chatRoomCount=0L;
 
     //@Column(name="end_date", nullable = false)
     //private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus postStatus;
+    private PostStatus postStatus=PostStatus.OPEN;
 
     @Enumerated(EnumType.STRING)
     @Column(name="post_type", nullable = false)
