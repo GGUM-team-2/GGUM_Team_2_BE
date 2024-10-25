@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -155,6 +156,27 @@ public class PostServiceImpl implements PostService {
         return new PostResponseDTO.ReadPostListDTO(postDTOs, (int) postPage.getTotalElements(), postPage.getNumber(), postPage.getTotalPages());
     }
 
+    @Override
+    @Transactional
+    public Post updatePost(Long postId, Long participantCount, PostStatus postStatus){
+        Optional<Post> optionalPost = postRepository.findById(postId);
+;
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+
+            if (participantCount != null) {
+                post.setParticipantCount(participantCount);
+            }
+
+            if (postStatus != null) {
+                post.setPostStatus(postStatus);
+            }
+
+            return postRepository.save(post);
+        }
+
+        return null;
+    }
 
 
 }

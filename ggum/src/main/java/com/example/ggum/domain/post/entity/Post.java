@@ -68,4 +68,22 @@ public class Post {
     @Column(name="post_type", nullable = false)
     private PostType postType;
 
+    @Override
+    public String toString() {
+        return "Post{" +
+                "Id=" + Id +
+                ", user=" + user +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", postCategory=" + postCategory +
+                ", price=" + price +
+                ", participantLimit=" + participantLimit +
+                ", participantCount=" + participantCount +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", chatRoomCount=" + chatRoomCount +
+                ", postStatus=" + postStatus +
+                ", postType=" + postType +
+                '}';
+    }
 }
