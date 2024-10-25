@@ -1,11 +1,15 @@
 package com.example.ggum.domain.post.dto;
 
+import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostResponseDTO {
 
@@ -39,6 +43,9 @@ public class PostResponseDTO {
         private LocalDateTime createdAt;
         private Long participantCount;
         private Long participantLimit;
+        private PostStatus postStatus;
+        private PostType postType;
+        private PostCategory postCategory;
 
         @Override
         public String toString() {
@@ -55,5 +62,15 @@ public class PostResponseDTO {
         }
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReadPostListDTO {
+        private List<PostResponseDTO.ReadPostDTO> posts;
+        private int totalPosts;
+        private int currentPage; // 현재 페이지
+        private int totalPages;   // 총 페이지 수
+    }
 
 }

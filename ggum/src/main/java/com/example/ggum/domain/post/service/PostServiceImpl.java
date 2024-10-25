@@ -7,17 +7,24 @@ import com.example.ggum.domain.chat.repository.MessageRepository;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.converter.PostMapper;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
+import com.example.ggum.domain.post.dto.PostResponseDTO;
 import com.example.ggum.domain.post.entity.Post;
+import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import com.example.ggum.domain.post.repository.PostLikeRepository;
 import com.example.ggum.domain.post.repository.PostRepository;
 import com.example.ggum.domain.user.entity.User;
 import com.example.ggum.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +104,57 @@ public class PostServiceImpl implements PostService {
 
         return post;
     }
+
+    @Override
+    public PostResponseDTO.ReadPostListDTO readPost(String filter, String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage;
+
+        // 상태가 있을 때만 PostStatus로 변환
+        PostStatus postStatus = (status != null) ? PostStatus.valueOf(status.toUpperCase()) : null;
+
+        // 필터와 상태에 따라 다르게 쿼리 수행
+        if (filter == null || filter.isEmpty()) {
+            // filter가 null 또는 빈 문자열일 때
+            if (postStatus != null) {
+                postPage = postRepository.findByPostStatus(postStatus, pageable); // 상태만으로 필터링
+            } else {
+                postPage = postRepository.findAll(pageable); // 전체 가져오기
+            }
+        } else {
+            switch (filter) {
+                case "onlypurchase": // 공동구매
+                    if (postStatus != null) {
+                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.GROUP_PURCHASE, postStatus, pageable);
+                    } else {
+                        postPage = postRepository.findByPostType(PostType.GROUP_PURCHASE, pageable); // 상태가 없으면 전체
+                    }
+                    break;
+                case "onlysharing": // 나눔
+                    if (postStatus != null) {
+                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.SHARING, postStatus, pageable);
+                    } else {
+                        postPage = postRepository.findByPostType(PostType.SHARING, pageable); // 상태가 없으면 전체
+                    }
+                    break;
+                default: // "total" 또는 알 수 없는 경우
+                    if (postStatus != null) {
+                        postPage = postRepository.findByPostStatus(postStatus, pageable); // 상태만으로 필터링
+                    } else {
+                        postPage = postRepository.findAll(pageable); // 전체 가져오기
+                    }
+                    break;
+            }
+        }
+
+
+        List<PostResponseDTO.ReadPostDTO> postDTOs = postPage.getContent().stream()
+                .map(PostConverter::toReadPostDTO)
+                .collect(Collectors.toList());
+
+        return new PostResponseDTO.ReadPostListDTO(postDTOs, (int) postPage.getTotalElements(), postPage.getNumber(), postPage.getTotalPages());
+    }
+
+
 
 }
