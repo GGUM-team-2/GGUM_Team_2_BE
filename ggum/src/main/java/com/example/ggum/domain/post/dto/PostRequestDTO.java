@@ -1,5 +1,6 @@
 package com.example.ggum.domain.post.dto;
 
+import com.example.ggum.domain.post.entity.status.PostCategory;
 import com.example.ggum.domain.post.entity.status.PostType;
 import jdk.jfr.Category;
 import lombok.Getter;
@@ -14,8 +15,8 @@ public class PostRequestDTO {
         String title;
         String content;
         Long price;
-        String category;
-        String postType;
+        PostCategory category;
+        PostType postType;
         Long participant_limit;
 
     }
@@ -31,8 +32,8 @@ public class PostRequestDTO {
         String title;
         String content;
         Long price;
-        String category;
-        String postType;
+        PostCategory category;
+        PostType postType;
         Long participant_limit;
     }
 

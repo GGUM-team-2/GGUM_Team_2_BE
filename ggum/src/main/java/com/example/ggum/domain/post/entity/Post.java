@@ -1,6 +1,7 @@
 package com.example.ggum.domain.post.entity;
 
 import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostLikeStatus;
 import com.example.ggum.domain.post.entity.status.PostStatus;
 import com.example.ggum.domain.post.entity.status.PostType;
 import jakarta.persistence.*;
@@ -45,6 +46,7 @@ public class Post {
     @Column(name="participant_limit", nullable = false)
     private Long participantLimit;
 
+    @Builder.Default
     @Column(name="participant_count", nullable = false)
     private Long participantCount=1L;
 
@@ -54,6 +56,7 @@ public class Post {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @Column(name="chatroom_count")
     private Long chatRoomCount=0L;
 
@@ -62,10 +65,35 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private PostStatus postStatus=PostStatus.OPEN;
 
     @Enumerated(EnumType.STRING)
     @Column(name="post_type", nullable = false)
     private PostType postType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="post_like", nullable = false)
+    @Builder.Default
+    private PostLikeStatus postLikeStatus=PostLikeStatus.DISLIKE;
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "Id=" + Id +
+                ", user=" + user +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", postCategory=" + postCategory +
+                ", price=" + price +
+                ", participantLimit=" + participantLimit +
+                ", participantCount=" + participantCount +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", chatRoomCount=" + chatRoomCount +
+                ", postStatus=" + postStatus +
+                ", postType=" + postType +
+                ", postLikeStatus=" + postLikeStatus +
+                '}';
+    }
 }
