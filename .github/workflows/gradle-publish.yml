@@ -19,9 +19,9 @@ jobs:
           java-version: 17
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./GGUM_Team_2_BE/ggum/gradlew
-        working-directory: ./GGUM_Team_2_BE/ggum
+        run: chmod +x gradlew
+        working-directory: GGUM_Team_2_BE/ggum
 
       - name: Build with Gradle
         run: ./gradlew build -x test
-        working-directory: ./GGUM_Team_2_BE/ggum
+        working-directory: GGUM_Team_2_BE/ggum
