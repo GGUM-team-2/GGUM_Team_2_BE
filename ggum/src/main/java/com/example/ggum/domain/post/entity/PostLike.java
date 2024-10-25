@@ -1,8 +1,7 @@
 package com.example.ggum.domain.post.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.ggum.domain.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
+@Builder
+@AllArgsConstructor
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
