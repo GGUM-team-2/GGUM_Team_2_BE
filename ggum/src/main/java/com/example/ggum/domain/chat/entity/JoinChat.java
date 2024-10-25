@@ -30,5 +30,4 @@ public class JoinChat {
         this.user = user;
         this.chatRoom = chatRoom;
     }
-
 }

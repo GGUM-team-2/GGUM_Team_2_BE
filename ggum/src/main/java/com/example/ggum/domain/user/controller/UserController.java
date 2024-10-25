@@ -95,7 +95,7 @@ public class UserController {
 
     //회원탈퇴
     @DeleteMapping("/withdraw")
-    public ResponseEntity<?> withdrawUser(@RequestParam Long userId) {
+    public ResponseEntity<?> withdrawUser(@RequestParam("userId") Long userId) {
         try {
             userService.withdraw(userId);
             return ResponseEntity.ok().body("Accept withdraw");
@@ -107,7 +107,7 @@ public class UserController {
 
     // 인증 이메일 전송
     @PostMapping("/mailSend")
-    public ResponseEntity<?> mailSend(@RequestParam String mail) {
+    public ResponseEntity<?> mailSend(@RequestParam("mail") String mail) {
         HashMap<String, Object> response = new HashMap<>();
 
         try {
@@ -129,7 +129,7 @@ public class UserController {
 
     //회원가입을 위한 메일 전송
     @PostMapping("/mailSendForSignup")
-    public ResponseEntity<?> mailSendForSignup(@RequestParam String mail) {
+    public ResponseEntity<?> mailSendForSignup(@RequestParam("mail") String mail) {
         HashMap<String, Object> response = new HashMap<>();
 
         try {
@@ -155,15 +155,15 @@ public class UserController {
 
     //비밀번호 재설정을 위한 메일 전송
     @PostMapping("/mailSendForCheckEmail")
-    public ResponseEntity<?> mailSendForCheckEmail(@RequestParam String email) {
+    public ResponseEntity<?> mailSendForCheckEmail(@RequestParam("mail") String mail) {
         HashMap<String, Object> response = new HashMap<>();
 
         try {
-            if (!userService.existsByEmail(email)) {
+            if (!userService.existsByEmail(mail)) {
                 throw new RuntimeException("해당 이메일을 가진 사용자가 존재하지 않습니다.");
             }
 
-            mailService.sendMail(email);
+            mailService.sendMail(mail);
             response.put("success", true);
             response.put("message", "비밀번호 찾기 인증 메일이 전송되었습니다.");
             return ResponseEntity.ok(response);
@@ -207,7 +207,7 @@ public class UserController {
 
     //닉네임 변경
     @PostMapping("/changeUsername")
-    public ResponseEntity<?> changeUsername(@RequestParam Long userId, @RequestParam String newUsername) {
+    public ResponseEntity<?> changeUsername(@RequestParam("userId") Long userId, @RequestParam("newUsername") String newUsername) {
         try {
             if (userService.existsByUsername(newUsername)) {
                 throw new RuntimeException("이미 존재하는 닉네임입니다.");
@@ -241,7 +241,7 @@ public class UserController {
 
     //닉네임 중복 확인
     @GetMapping("/checkSamename")
-    public ResponseEntity<?> checkSamename(@RequestParam String username) {
+    public ResponseEntity<?> checkSamename(@RequestParam("username") String username) {
         HashMap<String, Object> response = new HashMap<>();
 
         if (userService.existsByUsername(username)) {
@@ -274,7 +274,7 @@ public class UserController {
 
     // 인증번호 일치 여부 확인
     @GetMapping("/mailCheck")
-    public ResponseEntity<?> mailCheck(@RequestParam String mail, @RequestParam int userNumber) {
+    public ResponseEntity<?> mailCheck(@RequestParam("mail") String mail, @RequestParam("userNumber") int userNumber) {
         boolean isMatch = mailService.checkVerificationNumber(mail, userNumber); // 사용자별 인증번호 확인
 
         if (isMatch) {
