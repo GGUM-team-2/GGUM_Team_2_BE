@@ -35,6 +35,7 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostCategory postCategory;
 
@@ -60,6 +61,7 @@ public class Post {
     @Column(nullable = false)
     private PostStatus postStatus;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="post_type", nullable = false)
     private PostType postType;
 
