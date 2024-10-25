@@ -34,7 +34,7 @@ public class ChatController {
 
 
     @MessageMapping("/api/v1/chat/room/{roomId}/leave")
-    public void leaveRoom(ChatMessage chatMessage) {
+    public void leaveRoom(@DestinationVariable("roomId") Long roomId,ChatMessage chatMessage) {
         chatService.handleLeave(chatMessage);
     }
 

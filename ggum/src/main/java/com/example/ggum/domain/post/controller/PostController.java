@@ -1,5 +1,9 @@
 package com.example.ggum.domain.post.controller;
 
+import com.example.ggum.domain.chat.entity.ChatRoom;
+import com.example.ggum.domain.chat.repository.ChatRoomRepository;
+import com.example.ggum.domain.chat.repository.JoinChatRepository;
+import com.example.ggum.domain.chat.repository.MessageRepository;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.entity.Post;
 import com.example.ggum.domain.post.service.PostService;
@@ -12,6 +16,8 @@ import com.example.ggum.domain.post.dto.PostResponseDTO;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
 
 import com.example.ggum.security.TokenProvider;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +42,7 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<String> deletePost(
-            @PathVariable() Long postId,
+            @PathVariable("postId") Long postId,
             @RequestHeader("Authorization") String token) {
 
         if (token.startsWith("Bearer ")) {
@@ -48,6 +54,7 @@ public class PostController {
 
         return ResponseEntity.ok("success");
     }
+
 
     @PatchMapping("/{postId}")
     public ResponseEntity<PostResponseDTO.PostResultDTO> updatePost(

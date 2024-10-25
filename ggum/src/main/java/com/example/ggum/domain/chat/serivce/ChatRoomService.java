@@ -37,6 +37,7 @@ public class ChatRoomService {
     public ChatRoom createChatRoom(String roomName, Long postId, Long creatorId, List<Long> userIds) {
 
         User creator = userRepository.findById(creatorId);
+
         if (creator == null) {
             throw new IllegalArgumentException("유저를 찾을 수 없습니다 : " + creatorId);
         }
@@ -73,6 +74,10 @@ public class ChatRoomService {
             JoinChat joinChat = new JoinChat(user, chatRoom);
             joinChatRepository.save(joinChat);
         }
+
+        post.setChatRoomCount(post.getChatRoomCount() + 1);
+        postRepository.save(post);
+
         return chatRoom;
     }
 

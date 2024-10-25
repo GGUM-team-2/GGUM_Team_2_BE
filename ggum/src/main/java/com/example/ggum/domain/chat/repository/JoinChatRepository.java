@@ -13,4 +13,11 @@ public interface JoinChatRepository  extends JpaRepository<JoinChat, Long> {
     boolean existsByUserAndChatRoom(User user, ChatRoom chatRoom);
     Long countByChatRoom(ChatRoom chatRoom);
     List<JoinChat> findAllByUserId(Long userId);
+
+    void deleteByUserIdAndChatRoomId(Long userId, Long chatRoomId);
+
+    // 특정 채팅방에 남은 유저 수를 세는 메서드
+    int countByChatRoomId(Long chatRoomId);
+    void deleteByChatRoomId(Long chatRoomId);
+
 }
