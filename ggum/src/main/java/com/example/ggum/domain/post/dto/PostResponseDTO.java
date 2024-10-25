@@ -1,6 +1,7 @@
 package com.example.ggum.domain.post.dto;
 
 import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostLikeStatus;
 import com.example.ggum.domain.post.entity.status.PostStatus;
 import com.example.ggum.domain.post.entity.status.PostType;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,7 @@ public class PostResponseDTO {
         private PostStatus postStatus;
         private PostType postType;
         private PostCategory postCategory;
+        private PostLikeStatus postLikeStatus;
 
         @Override
         public String toString() {

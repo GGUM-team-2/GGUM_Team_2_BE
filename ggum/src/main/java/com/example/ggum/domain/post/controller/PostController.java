@@ -61,7 +61,8 @@ public class PostController {
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
         postService.deletePost(postId, userId);
 
-        return ResponseEntity.ok("success");
+        return ResponseEntity.ok("{\"message\":\"" + postId + " 게시글 삭제가 완료되었습니다.\"}");
+
     }
 
 

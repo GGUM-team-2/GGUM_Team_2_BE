@@ -27,10 +27,10 @@ public class PostConverter {
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .postCategory(PostMapper.toPostCategory(request.getCategory()))  // 카테고리 변환
+                .postCategory(request.getCategory())  // 카테고리 변환
                 .price(request.getPrice())
                 .participantLimit(request.getParticipant_limit())
-                .postType(PostMapper.toPostType(request.getPostType()))
+                .postType(request.getPostType())
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -50,6 +50,7 @@ public class PostConverter {
                 .postStatus(post.getPostStatus())
                 .postType(post.getPostType())
                 .postCategory(post.getPostCategory())
+                .postLikeStatus(post.getPostLikeStatus())
                 .build();
     }
 }
