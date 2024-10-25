@@ -7,6 +7,7 @@ import com.example.ggum.domain.chat.repository.MessageRepository;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.entity.Post;
 import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import com.example.ggum.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -84,7 +85,7 @@ public class PostController {
     @GetMapping("/{postId}")
     @Operation(summary = "하나의 게시글 조회", description = "게시글 id를 받고 그 게시글을 조회")
     public ResponseEntity<PostResponseDTO.ReadPostDTO> readOnePost(
-            @PathVariable("PostId") Long postId,
+            @PathVariable("postId") Long postId,
             @RequestHeader("Authorization") String token) {
 
         if (token.startsWith("Bearer ")) {
@@ -92,7 +93,7 @@ public class PostController {
         }
 
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
-        Post post = postService.readOnePost(postId, userId);
+        Post post = postService.readOnePost(postId);
 
         return ResponseEntity.ok(PostConverter.toReadPostDTO(post));
     }
@@ -100,8 +101,8 @@ public class PostController {
     @GetMapping("/")
     @Operation(summary = "모든 게시글 조회", description = "모든 게시글 필터와 status를 이용해 조회")
     public ResponseEntity<PostResponseDTO.ReadPostListDTO> readPost(
-            @RequestParam(value = "filter", required = false) String filter,
-            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "filter", required = false) PostType filter,
+            @RequestParam(value = "status", required = false) PostStatus status,
             @RequestParam(value = "page", defaultValue = "0") int page, // 기본값 0
             @RequestParam(value = "size", defaultValue = "10") int size, // 기본값 10
             @RequestHeader("Authorization") String token) {

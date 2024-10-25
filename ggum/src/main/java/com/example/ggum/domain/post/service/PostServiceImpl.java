@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,7 +45,8 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Post postCreate(PostRequestDTO.PostCreateDto request, Long userId){
-        // 사용자 정보를 가져오기 위한 리포지토리 호출
+        if(request.getParticipant_limit()<=0)
+            throw new IllegalArgumentException("전체 참여 인원이 0 이하일 수 없습니다.");
         User user = userRepository.findById(userId);
         Post post = PostConverter.toPost(request,user);
         return postRepository.save(post);
@@ -79,6 +81,9 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
 
+        if(request.getParticipant_limit()<=0)
+            throw new IllegalArgumentException("전체 참여 인원이 0 이하일 수 없습니다.");
+
         if (!post.getUser().getId().equals(userId)) {
             throw new SecurityException("게시물 소유자가 아닙니다."); // 소유자가 아닐 경우 예외 처리
         }
@@ -90,57 +95,51 @@ public class PostServiceImpl implements PostService {
         post.setParticipantLimit(request.getParticipant_limit());
         post.setPostCategory(PostMapper.toPostCategory(request.getCategory()));
         post.setPostType(PostMapper.toPostType(request.getPostType()));
+        post.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(post); // 업데이트된 게시물 반환
     }
 
     @Override
-    public Post readOnePost(Long postId, Long userId){
+    public Post readOnePost(Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다.")); // 게시물이 없을 경우 예외 처리
-
-        if (!post.getUser().getId().equals(userId)) {
-            throw new SecurityException("게시물 소유자가 아닙니다."); // 소유자가 아닐 경우 예외 처리
-        }
 
         return post;
     }
 
     @Override
-    public PostResponseDTO.ReadPostListDTO readPost(String filter, String status, int page, int size) {
+    public PostResponseDTO.ReadPostListDTO readPost(PostType filter, PostStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage;
 
-        // 상태가 있을 때만 PostStatus로 변환
-        PostStatus postStatus = (status != null) ? PostStatus.valueOf(status.toUpperCase()) : null;
-
-        // 필터와 상태에 따라 다르게 쿼리 수행
-        if (filter == null || filter.isEmpty()) {
-            // filter가 null 또는 빈 문자열일 때
-            if (postStatus != null) {
-                postPage = postRepository.findByPostStatus(postStatus, pageable); // 상태만으로 필터링
+        // filter가 null일 때 전체 게시글을 조회
+        if (filter == null) {
+            // status가 null일 경우 전체 게시글 조회
+            if (status != null) {
+                postPage = postRepository.findByPostStatus(status, pageable); // 상태만으로 필터링
             } else {
                 postPage = postRepository.findAll(pageable); // 전체 가져오기
             }
         } else {
             switch (filter) {
-                case "onlypurchase": // 공동구매
-                    if (postStatus != null) {
-                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.GROUP_PURCHASE, postStatus, pageable);
+                case GROUP_PURCHASE: // 공동구매
+                    if (status != null) {
+                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.GROUP_PURCHASE, status, pageable);
                     } else {
                         postPage = postRepository.findByPostType(PostType.GROUP_PURCHASE, pageable); // 상태가 없으면 전체
                     }
                     break;
-                case "onlysharing": // 나눔
-                    if (postStatus != null) {
-                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.SHARING, postStatus, pageable);
+                case SHARING: // 나눔
+                    if (status != null) {
+                        postPage = postRepository.findByPostTypeAndPostStatus(PostType.SHARING, status, pageable);
                     } else {
                         postPage = postRepository.findByPostType(PostType.SHARING, pageable); // 상태가 없으면 전체
                     }
                     break;
-                default: // "total" 또는 알 수 없는 경우
-                    if (postStatus != null) {
-                        postPage = postRepository.findByPostStatus(postStatus, pageable); // 상태만으로 필터링
+                default: // 그외
+                    if (status != null) {
+                        postPage = postRepository.findByPostStatus(status, pageable); // 상태만으로 필터링
                     } else {
                         postPage = postRepository.findAll(pageable); // 전체 가져오기
                     }
@@ -169,8 +168,16 @@ public class PostServiceImpl implements PostService {
             }
 
             if (postStatus != null) {
-                post.setPostStatus(postStatus);
+                if (postStatus == PostStatus.RESERVATION){
+                    if (post.getPostType() == PostType.SHARING) {
+                        post.setPostStatus(postStatus);
+                    }
+                    else{
+                        throw new IllegalArgumentException("공동구매는 나눔중이 될 수 없습니다.");
+                    }
+                }
             }
+            post.setUpdatedAt(LocalDateTime.now());
 
             return postRepository.save(post);
         }
