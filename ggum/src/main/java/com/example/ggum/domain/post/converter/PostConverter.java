@@ -32,6 +32,7 @@ public class PostConverter {
                 .price(request.getPrice())
                 .participantCount(1L)
                 .participantLimit(request.getParticipant_limit())
+                .chatRoomCount(0L)
                 .postType(PostMapper.toPostType(request.getPostType()))
                 .user(user)
                 .createdAt(LocalDateTime.now())
