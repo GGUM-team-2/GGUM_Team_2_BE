@@ -1,5 +1,6 @@
 package com.example.ggum.domain.post.dto;
 
+import com.example.ggum.domain.post.entity.status.PostType;
 import jdk.jfr.Category;
 import lombok.Getter;
 
