@@ -23,3 +23,13 @@ jobs:
       - name: Build with Gradle
         run: cd ggum && ./gradlew build -x test
         shell: bash
+        
+      - name: Deploy to EC2
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          KEY_PATH: ${{ secrets.KEY_PATH }}
+        run: |
+          echo "$EC2_SSH_KEY" > $KEY_PATH
+          chmod 600 $KEY_PATH
+          ssh -o StrictHostKeyChecking=no -i $KEY_PATH ec2-user@$EC2_HOST "cd /home/ec2-user/app/step1 && ./deploy.sh"
