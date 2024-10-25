@@ -50,11 +50,16 @@ public class WebSecurityConfig {
                 auth
                         .requestMatchers(
                                 new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/api/v1/auth/**"),
+                                new AntPathRequestMatcher("/auth/**"),
+                                new AntPathRequestMatcher("/api/v1/**"),
+                                new AntPathRequestMatcher("/ws-stomp/**"),
                                 new AntPathRequestMatcher("/h2-console/**"),
+                                new AntPathRequestMatcher("/ws-stomp/**"),
+                                new AntPathRequestMatcher("/**/*.html"),
+                                new AntPathRequestMatcher("/**/*.css"),
+                                new AntPathRequestMatcher("/**/*.js"),
                                 new AntPathRequestMatcher("/swagger-ui/**"),   // Swagger UI 경로
-                                new AntPathRequestMatcher("/v3/api-docs/**"),  // OpenAPI 경로
-                                new AntPathRequestMatcher("/api/v1/post/**"))
+                                new AntPathRequestMatcher("/v3/api-docs/**"))  // OpenAPI 경로
                         .permitAll();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -101,6 +106,7 @@ public class WebSecurityConfig {
         config.addAllowedMethod("OPTIONS");
         config.setMaxAge(MAX_AGE_SECS);
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("ws://localhost:8080");
         source.registerCorsConfiguration("/**", config);
         return source;
     }
