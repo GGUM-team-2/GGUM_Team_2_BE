@@ -129,7 +129,7 @@ public class PostController {
 
         // 서비스 메소드를 통해 게시글 업데이트
         Post updatedPost = postService.updatePost(postId, participantCount, postStatus);
-        System.out.println(updatedPost);
+
         if (updatedPost == null) {
             return ResponseEntity.notFound().build(); // 게시글이 존재하지 않으면 에러
         }

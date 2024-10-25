@@ -174,7 +174,9 @@ public class PostServiceImpl implements PostService {
                         throw new IllegalArgumentException("공동구매는 나눔중이 될 수 없습니다.");
                     }
                 }
+                post.setPostStatus(postStatus);
             }
+
             post.setUpdatedAt(LocalDateTime.now());
 
             return postRepository.save(post);
