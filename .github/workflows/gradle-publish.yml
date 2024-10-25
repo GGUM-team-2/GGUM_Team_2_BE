@@ -1,0 +1,25 @@
+name: GGUM Build and Deploy
+
+on:
+  push:
+    branches: 
+      - feat/#17-cicd
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17  # Java 17로 수정
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./GGUM_Team_2_BE/ggum/gradlew 
+
+      - name: Build with Gradle
+        run: ./GGUM_Team_2_BE/ggum/gradlew build -x test  # 빌드 명령 경로 수정 및 테스트 제외 옵션 추가
