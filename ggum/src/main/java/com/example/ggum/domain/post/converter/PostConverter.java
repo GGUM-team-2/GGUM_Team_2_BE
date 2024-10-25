@@ -50,6 +50,9 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .participantCount(post.getParticipantCount())
                 .participantLimit(post.getParticipantLimit())
+                .postStatus(post.getPostStatus())
+                .postType(post.getPostType())
+                .postCategory(post.getPostCategory())
                 .build();
     }
 }
