@@ -1,5 +1,9 @@
 package com.example.ggum.domain.post.service;
 
+import com.example.ggum.domain.chat.entity.ChatRoom;
+import com.example.ggum.domain.chat.repository.ChatRoomRepository;
+import com.example.ggum.domain.chat.repository.JoinChatRepository;
+import com.example.ggum.domain.chat.repository.MessageRepository;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.converter.PostMapper;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
@@ -13,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,8 +28,10 @@ public class PostServiceImpl implements PostService {
 
     private final PostLikeRepository postLikeRepository;
 
-    @Autowired
-    private UserRepository userRepository;// UserRepository 주입
+    private final MessageRepository messageRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final JoinChatRepository joinChatRepository;
+    private final UserRepository userRepository;// UserRepository 주입
 
     @Override
     @Transactional
@@ -42,6 +50,16 @@ public class PostServiceImpl implements PostService {
 
         if (!post.getUser().getId().equals(userId)) {
             throw new SecurityException("게시물 소유자가 아닙니다."); // 소유자가 아닐 경우 예외 처리
+        }
+
+        // 게시글에 속한 채팅방들을 모두 가져와서 삭제 진행
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByPostId(postId);
+
+        for (ChatRoom chatRoom : chatRooms) {
+
+            messageRepository.deleteByChatRoomId(chatRoom.getId());
+            joinChatRepository.deleteByChatRoomId(chatRoom.getId());
+            chatRoomRepository.deleteById(chatRoom.getId());
         }
 
         postRepository.delete(post);
