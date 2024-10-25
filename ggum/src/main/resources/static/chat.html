@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chat {
+            width: 80%;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        #messages {
+            height: 300px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            overflow-y: scroll;
+        }
+        #messageInput, #usernameInput {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        #roomInput, #userIdInput {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="chat">
+    <h1>Real-time Chat Room</h1>
+
+    <div>
+        <label for="userIdInput">User ID: </label>
+        <input type="text" id="userIdInput" placeholder="Enter your User ID" value="">
+    </div>
+
+    <div>
+        <label for="usernameInput">Username: </label>
+        <input type="text" id="usernameInput" placeholder="Enter your chat name" value="">
+    </div>
+
+    <div>
+        <label for="roomInput">Room ID: </label>
+        <input type="text" id="roomInput" placeholder="Enter Room ID" value="1">
+    </div>
+
+    <button id="connectBtn">Connect</button> <!-- 추가된 Connect 버튼 -->
+
+    <div id="messages"></div>
+
+    <input type="text" id="messageInput" placeholder="Type your message here..." />
+    <button id="sendBtn">Send Message</button>
+    <button id="leaveBtn">Leave Room</button>
+</div>
+
+<script>
+    var stompClient = null;
+    var roomId;
+    var userId;
+    var username;
+
+    function connect() {
+        var socket = new SockJS('http://localhost:8080/ws-stomp');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            roomId = document.getElementById('roomInput').value.trim();
+            userId = document.getElementById('userIdInput').value.trim();
+            username = document.getElementById('usernameInput').value.trim();
+
+            // 채팅 메시지 수신 구독
+            stompClient.subscribe('/sub/chat/room/' + roomId, function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            // 유저 입장 메시지 전송
+            var enterMessage = {
+                userId: userId,
+                roomId: roomId,
+                content: username + " has entered the room.",
+                username: username,
+                type: 'ENTER'
+            };
+            stompClient.send(`/pub/api/v1/chat/room/${roomId}/send`, {}, JSON.stringify(enterMessage));
+        });
+    }
+
+    // 메시지를 화면에 출력하는 함수
+    function showMessage(message) {
+        var messagesDiv = document.getElementById('messages');
+        var messageElement = document.createElement('div');
+        messageElement.innerHTML = `<strong>${message.username}:</strong> ${message.content}`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // 메시지 전송 함수
+    function sendMessage() {
+        var messageInput = document.getElementById('messageInput');
+        var messageContent = messageInput.value.trim();
+
+        if (messageContent && stompClient) {
+            var chatMessage = {
+                userId: userId,
+                roomId: roomId,
+                content: messageContent,
+                username: username,
+                type: 'CHAT'
+            };
+            stompClient.send(`/pub/api/v1/chat/room/${roomId}/send`, {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        }
+    }
+
+    // 유저 퇴장 함수
+    function leaveRoom() {
+        var leaveMessage = {
+            userId: userId,
+            roomId: roomId,
+            content: username + " has left the room.",
+            username: username,
+            type: 'LEAVE'
+        };
+        stompClient.send(`/pub/api/v1/chat/room/${roomId}/leave`, {}, JSON.stringify(leaveMessage));
+    }
+
+    document.getElementById('connectBtn').addEventListener('click', function () {
+        connect();  // Connect 버튼을 클릭해야 WebSocket 연결
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', function () {
+        sendMessage();
+    });
+
+    document.getElementById('leaveBtn').addEventListener('click', function () {
+        leaveRoom();
+    });
+
+</script>
+</body>
+</html>
