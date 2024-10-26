@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,7 +119,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponseDTO.ReadPostListDTO readPost(PostType filter, PostStatus status, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        // 내림차순 정렬 설정 (post_id 기준)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Post> postPage;
 
         // filter가 null일 때 전체 게시글을 조회
@@ -145,7 +147,7 @@ public class PostServiceImpl implements PostService {
                         postPage = postRepository.findByPostType(PostType.SHARING, pageable); // 상태가 없으면 전체
                     }
                     break;
-                default: // 그외
+                default: // 그 외
                     if (status != null) {
                         postPage = postRepository.findByPostStatus(status, pageable); // 상태만으로 필터링
                     } else {
@@ -154,7 +156,6 @@ public class PostServiceImpl implements PostService {
                     break;
             }
         }
-
 
         List<PostResponseDTO.ReadPostDTO> postDTOs = postPage.getContent().stream()
                 .map(PostConverter::toReadPostDTO)
