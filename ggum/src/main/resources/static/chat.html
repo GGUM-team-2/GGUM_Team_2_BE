@@ -7,61 +7,143 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
+        :root {
+            --primary-color: #4d7eff;
+            --background-color: #f7f8fa;
+            --border-color: #ddd;
+            --text-color: #333;
+            --button-hover: #375ccc;
+            --input-bg: #fff;
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
         #chat {
-            width: 80%;
-            margin: 0 auto;
-            border: 1px solid #ddd;
-            padding: 10px;
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #chat-header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
         }
         #messages {
-            height: 300px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            overflow-y: scroll;
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: var(--background-color);
         }
-        #messageInput, #usernameInput {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-        }
-        #roomInput, #userIdInput {
+        .message {
             margin-bottom: 10px;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+            color: var(--text-color);
+            background-color: #e1f5fe;
+        }
+        .message.self {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+        #input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-top: 1px solid var(--border-color);
+        }
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            font-size: 14px;
+            background-color: var(--input-bg);
+        }
+        #sendBtn, #connectBtn, #leaveBtn {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        #sendBtn:hover, #connectBtn:hover, #leaveBtn:hover {
+            background-color: var(--button-hover);
+        }
+        .top-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .top-controls input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            width: 100%;
+            font-size: 14px;
+        }
+        .top-controls label {
+            font-size: 12px;
+            color: #555;
         }
     </style>
 </head>
 <body>
 <div id="chat">
-    <h1>Real-time Chat Room</h1>
+    <div id="chat-header">Real-time Chat Room</div>
 
-    <div>
-        <label for="userIdInput">User ID: </label>
-        <input type="text" id="userIdInput" placeholder="Enter your User ID" value="">
+    <div class="top-controls">
+        <div>
+            <label for="userIdInput">User ID:</label>
+            <input type="text" id="userIdInput" placeholder="Enter your User ID">
+        </div>
+        <div>
+            <label for="usernameInput">Username:</label>
+            <input type="text" id="usernameInput" placeholder="Enter your chat name">
+        </div>
+        <div>
+            <label for="roomInput">Room ID:</label>
+            <input type="text" id="roomInput" placeholder="Enter Room ID" value="1">
+        </div>
+        <button id="connectBtn">Connect</button>
     </div>
-
-    <div>
-        <label for="usernameInput">Username: </label>
-        <input type="text" id="usernameInput" placeholder="Enter your chat name" value="">
-    </div>
-
-    <div>
-        <label for="roomInput">Room ID: </label>
-        <input type="text" id="roomInput" placeholder="Enter Room ID" value="1">
-    </div>
-
-    <button id="connectBtn">Connect</button> <!-- 추가된 Connect 버튼 -->
 
     <div id="messages"></div>
 
-    <input type="text" id="messageInput" placeholder="Type your message here..." />
-    <button id="sendBtn">Send Message</button>
-    <button id="leaveBtn">Leave Room</button>
+    <div id="input-container">
+        <input type="text" id="messageInput" placeholder="Type your message here..." />
+        <button id="sendBtn">Send</button>
+        <button id="leaveBtn">Leave Room</button>
+    </div>
 </div>
 
 <script>
-    var stompClient = null;
+    var stompClient = null;s
     var roomId;
     var userId;
     var username;
@@ -93,16 +175,16 @@
         });
     }
 
-    // 메시지를 화면에 출력하는 함수
     function showMessage(message) {
         var messagesDiv = document.getElementById('messages');
         var messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add(message.userId === userId ? 'self' : 'other');
         messageElement.innerHTML = `<strong>${message.username}:</strong> ${message.content}`;
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // 메시지 전송 함수
     function sendMessage() {
         var messageInput = document.getElementById('messageInput');
         var messageContent = messageInput.value.trim();
@@ -120,7 +202,6 @@
         }
     }
 
-    // 유저 퇴장 함수
     function leaveRoom() {
         var leaveMessage = {
             userId: userId,
@@ -130,20 +211,15 @@
             type: 'LEAVE'
         };
         stompClient.send(`/pub/api/v1/chat/room/${roomId}/leave`, {}, JSON.stringify(leaveMessage));
+        if (stompClient) {
+            stompClient.disconnect();
+        }
+        console.log("Disconnected");
     }
 
-    document.getElementById('connectBtn').addEventListener('click', function () {
-        connect();  // Connect 버튼을 클릭해야 WebSocket 연결
-    });
-
-    document.getElementById('sendBtn').addEventListener('click', function () {
-        sendMessage();
-    });
-
-    document.getElementById('leaveBtn').addEventListener('click', function () {
-        leaveRoom();
-    });
-
+    document.getElementById('connectBtn').addEventListener('click', connect);
+    document.getElementById('sendBtn').addEventListener('click', sendMessage);
+    document.getElementById('leaveBtn').addEventListener('click', leaveRoom);
 </script>
 </body>
 </html>
