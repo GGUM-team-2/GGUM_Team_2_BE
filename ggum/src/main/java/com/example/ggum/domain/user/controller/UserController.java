@@ -263,9 +263,9 @@ public class UserController {
                 token = token.substring(7);
             }
 
-            String userId = tokenProvider.validateAndGetUserId(token);
+            Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
 
-            return ResponseEntity.ok().body("사용자 ID: " + userId);
+            return ResponseEntity.ok().body(userId);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");

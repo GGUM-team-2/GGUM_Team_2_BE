@@ -43,6 +43,7 @@ public class PostResponseDTO {
     public static class ReadPostDTO { // ReadPostDTO를 static으로 추가
         private Long postId;
         private String title;
+        private Long userId;
         private String content;
         private String category;
         private double price;
@@ -59,6 +60,7 @@ public class PostResponseDTO {
             return "ReadPostDTO{" +
                     "postId=" + postId +
                     ", title='" + title + '\'' +
+                    ", userId=" + userId + '\'' +
                     ", content='" + content + '\'' +
                     ", category='" + category + '\'' +
                     ", price=" + price +
