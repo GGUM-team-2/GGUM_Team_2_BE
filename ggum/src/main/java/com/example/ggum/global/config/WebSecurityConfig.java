@@ -100,7 +100,7 @@ public class WebSecurityConfig {
         config.setAllowCredentials(true);
         // "*" 대신에 실제 허용할 도메인을 명시적으로 지정합니다.
         //config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
+        config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
@@ -111,7 +111,6 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://43.202.86.73");
         config.addAllowedOrigin("ws://localhost:8080");
-        config.setAllowedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
         return source;
     }
