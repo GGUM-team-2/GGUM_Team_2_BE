@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GGUM_Team_2_BE.iml" filepath="$PROJECT_DIR$/.idea/GGUM_Team_2_BE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggum.iml" filepath="$PROJECT_DIR$/.idea/modules/ggum.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggum.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ggum.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggum.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ggum.test.iml" />
     </modules>
   </component>
 </project>

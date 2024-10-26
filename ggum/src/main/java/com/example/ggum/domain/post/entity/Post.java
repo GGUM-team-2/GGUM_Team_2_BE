@@ -1,15 +1,25 @@
 package com.example.ggum.domain.post.entity;
 
+import com.example.ggum.domain.post.entity.status.PostCategory;
+import com.example.ggum.domain.post.entity.status.PostLikeStatus;
+import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.ggum.domain.user.entity.User;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
+@Builder
+@DynamicUpdate
+@DynamicInsert
+@AllArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,17 +36,19 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String postCategory;
+    private PostCategory postCategory;
 
-    @Column(nullable = false)
+    @Column()
     private Long price;
 
     @Column(name="participant_limit", nullable = false)
     private Long participantLimit;
 
+    @Builder.Default
     @Column(name="participant_count", nullable = false)
-    private Long participantCount;
+    private Long participantCount=1L;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
@@ -44,10 +56,44 @@ public class Post {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name="end_date", nullable = false)
-    private LocalDateTime endDate;
+    @Builder.Default
+    @Column(name="chatroom_count")
+    private Long chatRoomCount=0L;
+
+    //@Column(name="end_date", nullable = false)
+    //private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus poststatus;
+    @Builder.Default
+    private PostStatus postStatus=PostStatus.OPEN;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="post_type", nullable = false)
+    private PostType postType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="post_like", nullable = false)
+    @Builder.Default
+    private PostLikeStatus postLikeStatus=PostLikeStatus.DISLIKE;
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "Id=" + Id +
+                ", user=" + user +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", postCategory=" + postCategory +
+                ", price=" + price +
+                ", participantLimit=" + participantLimit +
+                ", participantCount=" + participantCount +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", chatRoomCount=" + chatRoomCount +
+                ", postStatus=" + postStatus +
+                ", postType=" + postType +
+                ", postLikeStatus=" + postLikeStatus +
+                '}';
+    }
 }
