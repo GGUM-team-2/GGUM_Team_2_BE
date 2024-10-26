@@ -44,7 +44,7 @@ public class PostController {
         }
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
         Post post = postService.postCreate(request, userId);
-
+        System.out.println(userId);
         return ResponseEntity.ok(PostConverter.toJoinResultDTO(post));
     }
 
