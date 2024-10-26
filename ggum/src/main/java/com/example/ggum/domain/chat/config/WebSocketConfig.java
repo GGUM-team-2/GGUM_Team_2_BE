@@ -13,8 +13,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry config) {
         // [주소] ws://localhost:8080/ws-stomp
         config.addEndpoint("/ws-stomp")
-                .setAllowedOrigins("*");
-//                .withSockJS();
+                .setAllowedOrigins("*")
+                .withSockJS();
     }
 
     @Override
