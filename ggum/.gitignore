@@ -37,3 +37,5 @@ out/
 .vscode/
 
 /resources/static/chat.html
+/.idea/dataSources.xml
+/out/
