@@ -1,5 +1,6 @@
 package com.example.ggum.domain.mypage.entity;
 
+import com.example.ggum.domain.post.entity.status.PostCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class Mypage {
     private String title;
 
     @Column(name = "post_category")
-    private String postCategory;
+    private PostCategory postCategory;
 
     private Long price;
 

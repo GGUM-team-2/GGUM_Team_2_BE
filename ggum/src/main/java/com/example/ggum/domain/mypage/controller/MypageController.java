@@ -2,6 +2,9 @@ package com.example.ggum.domain.mypage.controller;
 
 import com.example.ggum.domain.mypage.dto.MypageDTO;
 import com.example.ggum.domain.mypage.service.MypageService;
+import com.example.ggum.domain.post.dto.PostResponseDTO;
+import com.example.ggum.domain.post.entity.status.PostStatus;
+import com.example.ggum.domain.post.entity.status.PostType;
 import com.example.ggum.domain.user.dto.ResponseDTO;
 import com.example.ggum.domain.user.dto.UserDTO;
 import com.example.ggum.domain.user.entity.User;
@@ -107,8 +110,13 @@ public class MypageController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<MypageDTO> getMypageData(@PathVariable("userId") Long userId) {
-        MypageDTO mypageDTO = mypageService.getMypageData(userId);
+    public ResponseEntity<PostResponseDTO.ReadPostListDTO> getMypageData(@PathVariable("userId") Long userId,
+                                                                         @RequestParam(value = "filter", required = false) PostType filter,
+                                                                         @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                        @RequestParam(value = "size", defaultValue = "10") int size)
+    {
+
+        PostResponseDTO.ReadPostListDTO mypageDTO= mypageService.readMyPost(userId, filter, page, size);
         return ResponseEntity.ok(mypageDTO);
     }
 
