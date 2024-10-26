@@ -1,5 +1,6 @@
 package com.example.ggum.domain.post.entity;
 
+import com.example.ggum.domain.image.entity.Image;
 import com.example.ggum.domain.post.entity.status.PostCategory;
 import com.example.ggum.domain.post.entity.status.PostLikeStatus;
 import com.example.ggum.domain.post.entity.status.PostStatus;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -76,6 +79,9 @@ public class Post {
     @Column(name="post_like", nullable = false)
     @Builder.Default
     private PostLikeStatus postLikeStatus=PostLikeStatus.DISLIKE;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @Override
     public String toString() {
