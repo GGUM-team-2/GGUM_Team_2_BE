@@ -4,7 +4,11 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/ggum" />
   </component>
+<<<<<<< HEAD
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="openjdk-22" project-jdk-type="JavaSDK">
+=======
   <component name="ProjectRootManager" version="2" project-jdk-name="openjdk-22" project-jdk-type="JavaSDK">
+>>>>>>> 31af7ffd621e952dfc3a8a625bbfb4b0fb22c0dc
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

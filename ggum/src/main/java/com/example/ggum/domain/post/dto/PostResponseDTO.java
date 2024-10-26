@@ -19,13 +19,18 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostResultDTO{
-        Long postId;
-        LocalDateTime createdAt;
+
+        private Long postId;
+        private Long userId;        // User ID 추가
+        private String title;       // 제목 추가
+        private LocalDateTime createdAt;
 
         @Override
         public String toString() {
             return "PostResultDTO{" +
                     "postId=" + postId +
+                    ", userId=" + userId +
+                    ", title='" + title + '\'' +
                     ", createdAt=" + createdAt +
                     '}';
         }
