@@ -18,6 +18,8 @@ public class PostConverter {
 
         return PostResponseDTO.PostResultDTO.builder()
                 .postId(Post.getId())
+                .userId(Post.getUser() != null ? Post.getUser().getId() : null) // userId 설정
+                .title(Post.getTitle()) 
                 .createdAt(LocalDateTime.now())
                 .build();
     }

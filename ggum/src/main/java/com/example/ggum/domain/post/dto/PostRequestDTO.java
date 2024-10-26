@@ -24,6 +24,7 @@ public class PostRequestDTO {
     @Getter
     public static class PostDeleteDto{
         Long postId;
+        String content;
     }
 
     @Getter
