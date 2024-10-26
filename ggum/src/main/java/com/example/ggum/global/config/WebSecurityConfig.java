@@ -112,6 +112,8 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("http://localhost:4000");
         config.addAllowedOrigin("http://43.202.86.73");
         config.addAllowedOrigin("ws://localhost:8080");
+        config.addAllowedOrigin("http://43.202.86.73:8080");
+        config.addAllowedOrigin("ws://43.202.86.73:8080");
         source.registerCorsConfiguration("/**", config);
         return source;
     }
