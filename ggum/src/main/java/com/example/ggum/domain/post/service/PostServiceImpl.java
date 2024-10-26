@@ -4,6 +4,9 @@ import com.example.ggum.domain.chat.entity.ChatRoom;
 import com.example.ggum.domain.chat.repository.ChatRoomRepository;
 import com.example.ggum.domain.chat.repository.JoinChatRepository;
 import com.example.ggum.domain.chat.repository.MessageRepository;
+import com.example.ggum.domain.image.entity.Image;
+import com.example.ggum.domain.image.repository.ImageRepository;
+import com.example.ggum.domain.image.service.ImageService;
 import com.example.ggum.domain.post.converter.PostConverter;
 import com.example.ggum.domain.post.dto.PostRequestDTO;
 import com.example.ggum.domain.post.dto.PostResponseDTO;
@@ -38,7 +41,9 @@ public class PostServiceImpl implements PostService {
     private final MessageRepository messageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final JoinChatRepository joinChatRepository;
-    private final UserRepository userRepository;// UserRepository 주입
+    private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
     @Override
     @Transactional
@@ -68,6 +73,11 @@ public class PostServiceImpl implements PostService {
             messageRepository.deleteByChatRoomId(chatRoom.getId());
             joinChatRepository.deleteByChatRoomId(chatRoom.getId());
             chatRoomRepository.deleteById(chatRoom.getId());
+        }
+
+        List<Image> images = imageRepository.findAllByPost(post);
+        for (Image image : images) {
+            imageService.deleteImage(image.getId());
         }
 
         postRepository.delete(post);
