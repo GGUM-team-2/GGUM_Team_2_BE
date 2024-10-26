@@ -107,6 +107,7 @@ public class WebSecurityConfig {
         config.setMaxAge(MAX_AGE_SECS);
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://43.202.86.73");
         config.addAllowedOrigin("ws://localhost:8080");
         source.registerCorsConfiguration("/**", config);
         return source;
