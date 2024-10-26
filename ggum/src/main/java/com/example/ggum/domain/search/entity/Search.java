@@ -1,4 +1,4 @@
-package com.example.ggum.domain.search.entity;
+/*package com.example.ggum.domain.search.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,11 +16,10 @@ public class Search {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //카테코리, 키워드 모두 없으면 기본 게시판 출력되도록 설정해야 되지 않을런지...?
+    //만약에 키워드, 카테고리 없이 검색하면 전체가 출력되게 해야할지 고민
     @Column(nullable = true)
     private String selectedCategory;
 
     @Column(nullable = true)
     private String keyword;
-}
-
+}*/

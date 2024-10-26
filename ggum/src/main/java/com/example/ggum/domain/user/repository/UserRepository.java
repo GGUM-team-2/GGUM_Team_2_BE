@@ -9,5 +9,7 @@ import com.example.ggum.domain.user.entity.User;
 public interface UserRepository extends JpaRepository<User,String> {
     User findByEmail(String email);
     Boolean existsByEmail(String email);
+    Boolean existsByUsername(String Username);
     User findByEmailAndPassword(String email, String password);
+    User findById(Long id);
 }

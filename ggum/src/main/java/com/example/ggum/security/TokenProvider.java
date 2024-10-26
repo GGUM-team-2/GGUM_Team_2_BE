@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.stereotype.Service;
 
 import com.example.ggum.domain.user.entity.User;
@@ -38,5 +39,19 @@ public class TokenProvider {
                 .getBody();
         return claims.getSubject();
     }
+
+    public Claims validateAndGetClaims(String token) {
+        try {
+            // 토큰이 유효할 경우 Claims 반환
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료된 경우에도 Claims 반환 가능
+            return e.getClaims();
+        }
+    }
+
 }
 

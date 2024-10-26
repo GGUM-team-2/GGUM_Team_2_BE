@@ -1,15 +1,15 @@
 package com.example.ggum.domain.search.repository;
 
-import com.example.ggum.domain.post.entity.Post; // Post import
+import com.example.ggum.domain.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface SearchRepository extends JpaRepository<Post, Long> {
-    //UPPER, LOWER는 대소문자 영어 식별용
-    @Query("SELECT p FROM Post p WHERE p.category = :category AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<Post> findByCategoryAndKeyword(@Param("category") PostCategory category, @Param("keyword") String keyword);
+    @Query("SELECT p FROM Post p WHERE p.postCategory = :category AND " +
+            "(LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Post> findByCategoryAndKeyword(@Param("category") String category, @Param("keyword") String keyword);
 }
-
-
