@@ -9,6 +9,7 @@ import com.example.ggum.domain.user.service.MailService;
 import com.example.ggum.domain.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,7 @@ public class UserController {
 
     //일반유저 회원가입
     @PostMapping("/userSignup")
+    @Operation(summary="일반유저 회원가입")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         return registerUser(userDTO, "USER");
     }

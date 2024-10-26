@@ -15,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -109,6 +111,7 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://43.202.86.73");
         config.addAllowedOrigin("ws://localhost:8080");
+        config.setAllowedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
         return source;
     }
