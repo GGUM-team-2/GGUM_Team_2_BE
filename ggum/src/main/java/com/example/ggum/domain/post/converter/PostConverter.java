@@ -27,12 +27,10 @@ public class PostConverter {
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .postCategory(PostMapper.toPostCategory(request.getCategory()))  // 카테고리 변환
-                .postStatus(PostStatus.OPEN)
+                .postCategory(request.getCategory())  // 카테고리 변환
                 .price(request.getPrice())
-                .participantCount(1L)
                 .participantLimit(request.getParticipant_limit())
-                .postType(PostMapper.toPostType(request.getPostType()))
+                .postType(request.getPostType())
                 .user(user)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -49,6 +47,10 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .participantCount(post.getParticipantCount())
                 .participantLimit(post.getParticipantLimit())
+                .postStatus(post.getPostStatus())
+                .postType(post.getPostType())
+                .postCategory(post.getPostCategory())
+                .postLikeStatus(post.getPostLikeStatus())
                 .build();
     }
 }
