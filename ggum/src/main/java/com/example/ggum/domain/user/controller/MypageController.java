@@ -4,6 +4,7 @@ import com.example.ggum.domain.user.dto.ResponseDTO;
 import com.example.ggum.domain.user.dto.UserDTO;
 import com.example.ggum.domain.user.entity.User;
 import com.example.ggum.domain.user.repository.UserRepository;
+import com.example.ggum.domain.user.service.UserService;
 import com.example.ggum.security.TokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Slf4j
@@ -20,6 +22,9 @@ import java.util.Optional;
 public class MypageController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -102,6 +107,22 @@ public class MypageController {
             return ResponseEntity.status(401).body(new ResponseDTO("Token expired", null));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ResponseDTO("Internal server error", null));
+        }
+    }
+
+    //닉네임 중복 확인
+    @GetMapping("/checkSamename")
+    public ResponseEntity<?> checkSamename(@RequestParam("username") String username) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        if (userService.existsByUsername(username)) {
+            response.put("success", false);
+            response.put("message", "이미 존재하는 닉네임입니다.");
+            return ResponseEntity.badRequest().body(response);
+        } else {
+            response.put("success", true);
+            response.put("message", "사용가능한 닉네임입니다!");
+            return ResponseEntity.ok().body(response);
         }
     }
 }

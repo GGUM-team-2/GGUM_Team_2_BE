@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
@@ -175,6 +176,38 @@ public class UserController {
         }
     }
 
+    // 비밀번호 재설정
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestParam("userId") Long userId, @RequestParam("newPassword") String newPassword) {
+        HashMap<String, Object> response = new HashMap<>();
+
+        try {
+            // ID로 사용자 확인
+            Optional<User> optionalUser = Optional.ofNullable(userRepository.findById(userId));
+
+            if (!optionalUser.isPresent()) {
+                throw new RuntimeException("해당 ID를 가진 사용자가 존재하지 않습니다.");
+            }
+
+            User user = optionalUser.get();
+
+            // 비밀번호 재설정
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            response.put("success", true);
+            response.put("message", "비밀번호가 성공적으로 재설정되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
+
     //토큰 재발행
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String token) {
@@ -236,22 +269,6 @@ public class UserController {
                     .error(e.getMessage())
                     .build();
             return ResponseEntity.badRequest().body(responseDTO);
-        }
-    }
-
-    //닉네임 중복 확인
-    @GetMapping("/checkSamename")
-    public ResponseEntity<?> checkSamename(@RequestParam("username") String username) {
-        HashMap<String, Object> response = new HashMap<>();
-
-        if (userService.existsByUsername(username)) {
-            response.put("success", false);
-            response.put("message", "이미 존재하는 닉네임입니다.");
-            return ResponseEntity.badRequest().body(response);
-        } else {
-            response.put("success", true);
-            response.put("message", "사용가능한 닉네임입니다!");
-            return ResponseEntity.ok().body(response);
         }
     }
 

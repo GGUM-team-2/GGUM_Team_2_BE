@@ -60,10 +60,9 @@ public class UserService {
         }
         else {//학교 웹 메일인지 확인
             String domain = parts[1];
-            String[] domainParts = domain.split("\\.");
-            int length = domainParts.length;
-            if (length >= 3 && "ac".equals(domainParts[length - 2]) && "kr".equals(domainParts[length - 1])) {
-                result = true;
+            System.out.println(domain);
+            if (domain.equals("catholic.ac.kr")){
+                result=true;
             }
         }
         return result;
